@@ -1,0 +1,101 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+  <div>
+    <h2 class="h4 fw-bold mb-0">People Analytics Dashboard</h2>
+    <small class="text-muted">Viewing data exclusively for {{ session.get('hr_org') }}</small>
+  </div>
+  <a href="/survey/create" class="btn btn-primary btn-sm px-3">+ New Survey</a>
+</div>
+
+<div class="row g-3 mb-4">
+  <div class="col-12 col-md-4">
+    <div class="card border-0 shadow-sm p-3">
+      <small class="text-muted text-uppercase fw-semibold">Total Responses</small>
+      <div class="display-6 fw-bold text-dark">{{ total_responses }}</div>
+    </div>
+  </div>
+  <div class="col-6 col-md-4">
+    <div class="card border-0 shadow-sm p-3">
+      <small class="text-muted text-uppercase fw-semibold">Avg Engagement</small>
+      <div class="display-6 fw-bold text-primary">{{ avg_engagement }} <span class="fs-6 text-muted">/ 5</span></div>
+    </div>
+  </div>
+  <div class="col-6 col-md-4">
+    <div class="card border-0 shadow-sm p-3">
+      <small class="text-muted text-uppercase fw-semibold">Workload Balance</small>
+      <div class="display-6 fw-bold text-success">{{ avg_workload }} <span class="fs-6 text-muted">/ 5</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="card border-0 shadow-sm p-3 mb-4">
+  <h6 class="fw-bold mb-3">Live Sentiment Metrics</h6>
+  <div style="position: relative; height: 250px; width: 100%;">
+    <canvas id="pulseChart"></canvas>
+  </div>
+</div>
+
+<div class="card border-0 shadow-sm">
+  <div class="card-header bg-white py-3">
+    <h6 class="mb-0 fw-bold">Your Active Surveys</h6>
+  </div>
+  <div class="table-responsive">
+    <table class="table table-hover align-middle mb-0">
+      <thead class="table-light">
+        <tr>
+          <th>Title</th>
+          <th>Responses</th>
+          <th>Share Link</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for s in surveys %}
+        <tr>
+          <td class="fw-semibold">{{ s.title }}</td>
+          <td><span class="badge bg-secondary">{{ s.responses|length }}</span></td>
+          <td>
+            <a href="/s/{{ s.id }}" target="_blank" class="badge bg-primary text-decoration-none">
+              Copy / Open Link ↗
+            </a>
+          </td>
+        </tr>
+        {% else %}
+        <tr>
+          <td colspan="3" class="text-center text-muted py-4">No surveys found. Click "+ New Survey" to create your first one.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+  const avgEngagement = Number("{{ avg_engagement|default(0) }}");
+  const avgWorkload = Number("{{ avg_workload|default(0) }}");
+  const ctx = document.getElementById('pulseChart').getContext('2d');
+
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: ['Engagement Level', 'Workload Feasibility'],
+      datasets: [{
+        label: 'Average Score',
+        data: [avgEngagement, avgWorkload],
+        backgroundColor: ['#0d6efd', '#198754'],
+        borderRadius: 8
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        y: {
+          beginAtZero: true,
+          max: 5
+        }
+      }
+    }
+  });
+</script>
+{% endblock %}

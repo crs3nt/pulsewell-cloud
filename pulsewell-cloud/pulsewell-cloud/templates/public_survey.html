@@ -1,0 +1,47 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-12 col-md-7 col-lg-6">
+    <div class="card border-0 shadow-sm p-4">
+      <h3 class="fw-bold mb-1">{{ survey.title }}</h3>
+      <p class="text-muted small mb-4">{{ survey.description or "Your feedback is anonymous and helps leadership improve work culture." }}</p>
+
+      <form method="POST">
+        <div class="mb-4">
+          <label class="form-label fw-semibold">1. How energizing and engaging is your work right now?</label>
+          <div class="d-flex justify-content-between px-2">
+            {% for i in range(1, 6) %}
+            <div class="form-check form-check-inline text-center">
+              <input class="form-check-input" type="radio" name="engagement" id="eng_{{ i }}" value="{{ i }}" {% if i == 3 %}checked{% endif %}>
+              <label class="form-check-label d-block mt-1 small" for="eng_{{ i }}">{{ i }}</label>
+            </div>
+            {% endfor %}
+          </div>
+          <div class="d-flex justify-content-between text-muted" style="font-size: 0.75rem;">
+            <span>1 = Very Low</span>
+            <span>5 = Exceptional</span>
+          </div>
+        </div>
+
+        <div class="mb-4">
+          <label class="form-label fw-semibold">2. Is your workload manageable within regular working hours?</label>
+          <div class="d-flex justify-content-between px-2">
+            {% for i in range(1, 6) %}
+            <div class="form-check form-check-inline text-center">
+              <input class="form-check-input" type="radio" name="workload" id="work_{{ i }}" value="{{ i }}" {% if i == 3 %}checked{% endif %}>
+              <label class="form-check-label d-block mt-1 small" for="work_{{ i }}">{{ i }}</label>
+            </div>
+            {% endfor %}
+          </div>
+          <div class="d-flex justify-content-between text-muted" style="font-size: 0.75rem;">
+            <span>1 = Overwhelmed</span>
+            <span>5 = Very Balanced</span>
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold">Submit Anonymous Feedback</button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
